@@ -12,7 +12,7 @@ players_marks = ['X', 'O']
 
 
 def display_board(board_list):
-    """Prints the game board."""
+    """Prints the game board"""
     print(board_list[99] + ' | ' + board_list[98] + ' | ' + board_list[97] + ' | ' + board_list[96] + ' | '
           + board_list[95] + ' | ' + board_list[94] + ' | ' + board_list[93] + ' | ' + board_list[92] + ' | ' +
           board_list[91] + ' | ' + board_list[90] + ' ')
@@ -55,7 +55,7 @@ def display_board(board_list):
 
 
 def player_input():
-    """Gets player's input string to choose the game mark to play."""
+    """Gets a player input string to choose the game mark to play and automatically determines a computer mark"""
     player_first = ''
     while player_first not in ('X', 'O'):
         player_first = input('Player, please choose your marker: X or O: ').upper()
@@ -68,7 +68,7 @@ def player_input():
 
 
 def place_marker(board, marker, position):
-    """Puts a player mark to appropriate position."""
+    """Puts a player and computer marks to appropriate position"""
     if len(board[position]) == 3:
         board[position] = f'  {marker}'
         play_board_idx.remove(position)
@@ -81,7 +81,7 @@ def place_marker(board, marker, position):
 
 
 def check_place_marker(board, marker, position) :
-    """Test function place_marker for arrangement computer position"""
+    """Test function arranges computer position for best choice position"""
     if len(board[position]) == 3:
         board[position] = f'  {marker}'
     elif len(board[position]) == 2:
@@ -156,19 +156,19 @@ def lose_check(board, mark):
 
 
 def space_check(board, position):
-    """Returns boolean value whether the cell is free or not."""
+    """Returns boolean value whether the cell is free or not"""
     mark = board[position].replace(" ", "")
     if mark not in players_marks:
         return True
 
 
 def full_board_check(board):
-    """Returns boolean value whether the game board is full of game marks."""
+    """Returns boolean value whether the game board is full of game marks"""
     return len(set(board)) == 2
 
 
 def player_choice(board, player_mark):
-    """Gets player's next position and check if it's appropriate to play."""
+    """Gets player next position and check if it's appropriate to play"""
     position = 0
     while position not in [num for num in range(1, 101)]:
         try:
@@ -189,7 +189,7 @@ def player_choice(board, player_mark):
 
 
 def replay():
-    """Asks the players to play again."""
+    """Asks the player to play again"""
     decision = ''
     while decision not in ('y', 'n'):
         decision = input('Would you like to play again? (Type "y" or "n") ').lower()
@@ -198,7 +198,7 @@ def replay():
 
 
 def clear_screen():
-    """Clears the game screen via adding new rows."""
+    """Clears the game screen via adding new rows"""
     print('\n' * 100)
 
 
@@ -270,14 +270,14 @@ while True:
             print(f'In this position: {computer_position + 1} computer can be loss!')
             board.discard(computer_position)
             computer_position = random.choice(list(play_board_idx))
-            print(f'PLAY_BOARD_IDX: {play_board_idx}')
+            print(f'play_board_idx: {play_board_idx}')
             if len(board) == 0:
                 break
             while check_computer_the_worst_move_at_current_position(play_board, current_player_mark, computer_position):
                 print(f'In this position: {computer_position + 1} computer can do the worst move!')
                 board.discard(computer_position)
                 computer_position = random.choice(list(play_board_idx))
-                print(f'PLAY_BOARD_IDX: {play_board_idx}')
+                print(f'play_board_idx: {play_board_idx}')
                 if len(board) == 0:
                     break
 
