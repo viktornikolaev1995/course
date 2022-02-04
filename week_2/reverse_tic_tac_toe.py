@@ -1,6 +1,4 @@
-"""
-Reverse Tic-Tac-Toe game
-"""
+"""Reverse Tic-Tac-Toe game"""
 from copy import copy
 import random
 import re
@@ -103,50 +101,50 @@ def regex(string, mark):
 def lose_check(board, mark):
     """Returns boolean value whether the player or the computer loses the game"""
     rows = [
-        f'{board[99]}{board[98]}{board[97]}{board[96]}{board[95]}{board[94]}{board[93]}{board[92]}{board[91]} \
-    {board[90]}',   # 1 horizontal
-        f'{board[89]}{board[88]}{board[87]}{board[86]}{board[85]}{board[84]}{board[83]}{board[82]}{board[81]} \
-    {board[80]}'    # 2 horizontal
-        f'{board[79]}{board[78]}{board[77]}{board[76]}{board[75]}{board[74]}{board[73]}{board[72]}{board[71]} \
-    {board[70]}',   # 3 horizontal
-        f'{board[69]}{board[68]}{board[67]}{board[66]}{board[65]}{board[64]}{board[63]}{board[62]}{board[61]} \
-    {board[60]}',   # 4 horizontal
-        f'{board[59]}{board[58]}{board[57]}{board[56]}{board[55]}{board[54]}{board[53]}{board[52]}{board[51]} \
-    {board[50]}',   # 5 horizontal
-        f'{board[49]}{board[48]}{board[47]}{board[46]}{board[45]}{board[44]}{board[43]}{board[42]}{board[41]} \
-    {board[40]}',   # 6 horizontal
-        f'{board[39]}{board[38]}{board[37]}{board[36]}{board[35]}{board[34]}{board[33]}{board[32]}{board[31]} \
-    {board[30]}',   # 7 horizontal
-        f'{board[29]}{board[28]}{board[27]}{board[26]}{board[25]}{board[24]}{board[23]}{board[22]}{board[21]} \
-    {board[20]}',   # 8 horizontal
-        f'{board[19]}{board[18]}{board[17]}{board[16]}{board[15]}{board[14]}{board[13]}{board[12]}{board[11]} \
-    {board[10]}',   # 9 horizontal
-        f'{board[9]}{board[8]}{board[7]}{board[6]}{board[5]}{board[4]}{board[3]}{board[2]}{board[1]} \
-    {board[0]}',    # 10 horizontal
-        f'{board[99]}{board[89]}{board[79]}{board[69]}{board[59]}{board[49]}{board[39]}{board[29]}{board[19]} \
-    {board[9]}',    # 1 vertical
-        f'{board[98]}{board[88]}{board[78]}{board[68]}{board[58]}{board[48]}{board[38]}{board[28]}{board[18]} \
-    {board[8]}',    # 2 vertical
-        f'{board[97]}{board[87]}{board[77]}{board[67]}{board[57]}{board[47]}{board[37]}{board[27]}{board[17]} \
-    {board[7]}',    # 3 vertical
-        f'{board[96]}{board[86]}{board[76]}{board[66]}{board[56]}{board[46]}{board[36]}{board[26]}{board[16]} \
-    {board[6]}',    # 4 vertical
-        f'{board[95]}{board[85]}{board[75]}{board[65]}{board[55]}{board[45]}{board[35]}{board[25]}{board[15]} \
-    {board[5]}',    # 5 vertical
-        f'{board[94]}{board[84]}{board[74]}{board[64]}{board[54]}{board[44]}{board[34]}{board[24]}{board[14]} \
-    {board[4]}',    # 6 vertical
-        f'{board[93]}{board[83]}{board[73]}{board[63]}{board[53]}{board[43]}{board[33]}{board[23]}{board[13]} \
-    {board[3]}',    # 7 vertical
-        f'{board[92]}{board[82]}{board[72]}{board[62]}{board[52]}{board[42]}{board[32]}{board[22]}{board[12]} \
-    {board[2]}',    # 8 vertical
-        f'{board[91]}{board[81]}{board[71]}{board[61]}{board[51]}{board[41]}{board[31]}{board[21]}{board[11]} \
-    {board[1]}',    # 9 vertical
-        f'{board[90]}{board[80]}{board[70]}{board[60]}{board[50]}{board[40]}{board[30]}{board[20]}{board[10]} \
-    {board[0]}',    # 10 vertical
-        f'{board[99]}{board[88]}{board[77]}{board[66]}{board[55]}{board[44]}{board[33]}{board[22]}{board[11]} \
-    {board[0]}',    # 1 diagonal
-        f'{board[9]}{board[18]}{board[27]}{board[36]}{board[45]}{board[54]}{board[63]}{board[72]}{board[81]} \
-    {board[90]}'    # 2 diagonal
+        f'{board[99]}{board[98]}{board[97]}{board[96]}{board[95]}{board[94]}{board[93]}{board[92]}{board[91]}'
+        f'{board[90]}',   # 1 horizontal
+        f'{board[89]}{board[88]}{board[87]}{board[86]}{board[85]}{board[84]}{board[83]}{board[82]}{board[81]}'
+        f'{board[80]}'    # 2 horizontal
+        f'{board[79]}{board[78]}{board[77]}{board[76]}{board[75]}{board[74]}{board[73]}{board[72]}{board[71]}'
+        f'{board[70]}',   # 3 horizontal
+        f'{board[69]}{board[68]}{board[67]}{board[66]}{board[65]}{board[64]}{board[63]}{board[62]}{board[61]}'
+        f'{board[60]}',   # 4 horizontal
+        f'{board[59]}{board[58]}{board[57]}{board[56]}{board[55]}{board[54]}{board[53]}{board[52]}{board[51]}'
+        f'{board[50]}',   # 5 horizontal
+        f'{board[49]}{board[48]}{board[47]}{board[46]}{board[45]}{board[44]}{board[43]}{board[42]}{board[41]}'
+        f'{board[40]}',   # 6 horizontal
+        f'{board[39]}{board[38]}{board[37]}{board[36]}{board[35]}{board[34]}{board[33]}{board[32]}{board[31]}'
+        f'{board[30]}',   # 7 horizontal
+        f'{board[29]}{board[28]}{board[27]}{board[26]}{board[25]}{board[24]}{board[23]}{board[22]}{board[21]}'
+        f'{board[20]}',   # 8 horizontal
+        f'{board[19]}{board[18]}{board[17]}{board[16]}{board[15]}{board[14]}{board[13]}{board[12]}{board[11]}'
+        f'{board[10]}',   # 9 horizontal
+        f'{board[9]}{board[8]}{board[7]}{board[6]}{board[5]}{board[4]}{board[3]}{board[2]}{board[1]}'
+        f'{board[0]}',    # 10 horizontal
+        f'{board[99]}{board[89]}{board[79]}{board[69]}{board[59]}{board[49]}{board[39]}{board[29]}{board[19]}'
+        f'{board[9]}',    # 1 vertical
+        f'{board[98]}{board[88]}{board[78]}{board[68]}{board[58]}{board[48]}{board[38]}{board[28]}{board[18]}'
+        f'{board[8]}',    # 2 vertical
+        f'{board[97]}{board[87]}{board[77]}{board[67]}{board[57]}{board[47]}{board[37]}{board[27]}{board[17]}'
+        f'{board[7]}',    # 3 vertical
+        f'{board[96]}{board[86]}{board[76]}{board[66]}{board[56]}{board[46]}{board[36]}{board[26]}{board[16]}'
+        f'{board[6]}',    # 4 vertical
+        f'{board[95]}{board[85]}{board[75]}{board[65]}{board[55]}{board[45]}{board[35]}{board[25]}{board[15]}'
+        f'{board[5]}',    # 5 vertical
+        f'{board[94]}{board[84]}{board[74]}{board[64]}{board[54]}{board[44]}{board[34]}{board[24]}{board[14]}'
+        f'{board[4]}',    # 6 vertical
+        f'{board[93]}{board[83]}{board[73]}{board[63]}{board[53]}{board[43]}{board[33]}{board[23]}{board[13]}'
+        f'{board[3]}',    # 7 vertical
+        f'{board[92]}{board[82]}{board[72]}{board[62]}{board[52]}{board[42]}{board[32]}{board[22]}{board[12]}'
+        f'{board[2]}',    # 8 vertical
+        f'{board[91]}{board[81]}{board[71]}{board[61]}{board[51]}{board[41]}{board[31]}{board[21]}{board[11]}'
+        f'{board[1]}',    # 9 vertical
+        f'{board[90]}{board[80]}{board[70]}{board[60]}{board[50]}{board[40]}{board[30]}{board[20]}{board[10]}'
+        f'{board[0]}',    # 10 vertical
+        f'{board[99]}{board[88]}{board[77]}{board[66]}{board[55]}{board[44]}{board[33]}{board[22]}{board[11]}'
+        f'{board[0]}',    # 1 diagonal
+        f'{board[9]}{board[18]}{board[27]}{board[36]}{board[45]}{board[54]}{board[63]}{board[72]}{board[81]}'
+        f'{board[90]}'    # 2 diagonal
     ]
 
     for row in rows:
@@ -183,8 +181,8 @@ def player_choice(board, player_mark):
     else:
         """If the player chooses a non-free cell, then it is transferred to the player_choice function
             to fill exactly the free cell"""
-        print(
-            f'Player "{player_mark}", please choose a free cell! The cell with the number {position + 1} is borrowed!')
+        print(f'Player "{player_mark}", please choose a free cell! The cell with the number {position + 1} '
+              f'is borrowed!')
         return player_choice(board, player_mark)
 
 
@@ -267,17 +265,13 @@ while True:
         board = copy(play_board_idx)
 
         while check_computer_can_loss_at_current_position(play_board, current_player_mark, computer_position):
-            print(f'In this position: {computer_position + 1} computer can be loss!')
             board.discard(computer_position)
             computer_position = random.choice(list(play_board_idx))
-            print(f'play_board_idx: {play_board_idx}')
             if len(board) == 0:
                 break
             while check_computer_the_worst_move_at_current_position(play_board, current_player_mark, computer_position):
-                print(f'In this position: {computer_position + 1} computer can do the worst move!')
                 board.discard(computer_position)
                 computer_position = random.choice(list(play_board_idx))
-                print(f'play_board_idx: {play_board_idx}')
                 if len(board) == 0:
                     break
 
