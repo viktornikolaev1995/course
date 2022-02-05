@@ -248,13 +248,16 @@ while True:
         place_marker(play_board, current_mark, play_position)
     else:
         computer_position = random.choice(list(play_board_idx))
-        board = copy(play_board_idx)
+        play_board_idx_copy = copy(play_board_idx)
 
         while check_computer_can_loss_at_current_position(play_board, current_mark, computer_position):
-            board.discard(computer_position)
-            if len(board) == 0:
+            print(f'In this position computer can be loss: {computer_position}')
+            print(f'play_board_idx_copy: {play_board_idx_copy}')
+            play_board_idx_copy.discard(computer_position)
+            if len(play_board_idx_copy) == 0:
                 break
-            computer_position = random.choice(list(play_board_idx))
+            computer_position = random.choice(list(play_board_idx_copy))
+            print(f'Selecting the following position: {computer_position}')
 
         print(f'The computer with the mark "{current_mark} chose in his turn cell with the number": '
               f'{computer_position + 1}')
