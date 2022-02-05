@@ -54,15 +54,15 @@ def display_board(board_list):
 
 def player_input():
     """Gets a player input string to choose the game mark to play and automatically determines a computer mark"""
-    player_first = ''
-    while player_first not in ('X', 'O'):
-        player_first = input('Player, please choose your marker: X or O: ').upper()
+    player = ''
+    while player not in ('X', 'O'):
+        player = input('Player, please choose your marker: X or O: ').upper()
 
-    if player_first == 'X':
-        player_second = 'O'
+    if player == 'X':
+        computer = 'O'
     else:
-        player_second = 'X'
-    return player_first, player_second
+        computer = 'X'
+    return player, computer
 
 
 def place_marker(board, marker, position):
@@ -229,57 +229,38 @@ def check_computer_can_loss_at_current_position(board, mark, position):
     return False
 
 
-def check_computer_the_worst_move_at_current_position(board, mark, position):
-    """Check, if current computer position can do the worst move. If there are player cells that lead to defeat,
-    then try not to use them, if possible"""
-    board_copy = copy(board)
-    if mark == "X":
-        mark = "O"
-    else:
-        mark = "X"
-    check_place_marker(board_copy, mark, position)
-    if lose_check(board_copy, mark):
-        return True
-    return False
-
-
 print('Welcome to Reverse Tic Tac Toe!')
 print('You\'ll play against the computer!')
 print('The one who has a match of 5 figures horizontally, vertically or diagonally loses!')
 player, computer = player_input()
-current_player_mark = 'X'
-if player == current_player_mark:
-    print(f'Player with mark "{current_player_mark}" goes first according to the canon!')
+current_mark = 'X'
+if player == current_mark:
+    print(f'Player with mark "{current_mark}" goes first according to the canon!')
 else:
-    print(f'The computer with mark "{current_player_mark}" goes first according to the canon!')
+    print(f'The computer with mark "{current_mark}" goes first according to the canon!')
 
 while True:
-    if current_player_mark == player:
+    if current_mark == player:
         display_board(play_board)
-        print(f'Turn of the player with the mark "{current_player_mark}":')
+        print(f'Turn of the player with the mark "{current_mark}":')
 
-        play_position = player_choice(play_board, current_player_mark)
-        place_marker(play_board, current_player_mark, play_position)
+        play_position = player_choice(play_board, current_mark)
+        place_marker(play_board, current_mark, play_position)
     else:
         computer_position = random.choice(list(play_board_idx))
         board = copy(play_board_idx)
 
-        while check_computer_can_loss_at_current_position(play_board, current_player_mark, computer_position):
+        while check_computer_can_loss_at_current_position(play_board, current_mark, computer_position):
             board.discard(computer_position)
-            computer_position = random.choice(list(play_board_idx))
             if len(board) == 0:
                 break
-            while check_computer_the_worst_move_at_current_position(play_board, current_player_mark, computer_position):
-                board.discard(computer_position)
-                computer_position = random.choice(list(play_board_idx))
-                if len(board) == 0:
-                    break
+            computer_position = random.choice(list(play_board_idx))
 
-        print(f'The computer with the mark "{current_player_mark} chose in his turn cell with the number": '
+        print(f'The computer with the mark "{current_mark} chose in his turn cell with the number": '
               f'{computer_position + 1}')
-        place_marker(play_board, current_player_mark, computer_position)
+        place_marker(play_board, current_mark, computer_position)
 
-    if check_game_finish(play_board, current_player_mark, player):
+    if check_game_finish(play_board, current_mark, player):
         display_board(play_board)
         if not replay():
             break
@@ -291,10 +272,10 @@ while True:
             print('You\'ll play against the computer!')
             print('The one who has a match of 5 figures horizontally, vertically or diagonally loses!')
             player, computer = player_input()
-            current_player_mark = 'X'
-            if player == current_player_mark:
-                print(f'Player with mark "{current_player_mark}" goes first according to the canon')
+            current_mark = 'X'
+            if player == current_mark:
+                print(f'Player with mark "{current_mark}" goes first according to the canon')
             else:
-                print(f'The computer with mark "{current_player_mark}" goes first according to the canon')
+                print(f'The computer with mark "{current_mark}" goes first according to the canon')
     else:
-        current_player_mark = switch_player(current_player_mark)
+        current_mark = switch_player(current_mark)
