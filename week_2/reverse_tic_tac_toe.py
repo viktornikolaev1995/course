@@ -251,13 +251,10 @@ while True:
         play_board_idx_copy = copy(play_board_idx)
 
         while check_computer_can_loss_at_current_position(play_board, current_mark, computer_position):
-            print(f'In this position computer can be loss: {computer_position}')
-            print(f'play_board_idx_copy: {play_board_idx_copy}')
             play_board_idx_copy.discard(computer_position)
             if len(play_board_idx_copy) == 0:
                 break
             computer_position = random.choice(list(play_board_idx_copy))
-            print(f'Selecting the following position: {computer_position}')
 
         print(f'The computer with the mark "{current_mark} chose in his turn cell with the number": '
               f'{computer_position + 1}')
