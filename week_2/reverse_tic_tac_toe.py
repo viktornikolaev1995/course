@@ -69,10 +69,8 @@ def check_place_marker(board, marker, position):
 def regex(string, mark):
     """Checks for the presence of a mark X or O in 5 in a row rule and return boolean value"""
     replaced = re.sub(r'[ |]', '', string)
-    #print(f'replaced: {ascii(replaced)}')  # delete
     pattern = re.compile(r'([XO])\1{4}')
     match = re.findall(pattern, replaced)
-    #print(f'match: {match}')  # delete
     if mark in match:
         return True
     return False
@@ -91,18 +89,14 @@ def iterator(board, start, stop, step, offset):
 def lose_check(board, mark):
     """Returns boolean value whether the player or the computer loses the game"""
     horizontal_rows = iterator(board, start=90, stop=100, step=1, offset=10)
-    # print(horizontal_rows)  # delete
     vertical_rows = iterator(board, start=9, stop=100, step=10, offset=1)
-    #print(vertical_rows)  # delete
     diagonal_rows = [
         ''.join([board[i] for i in range(0, 100, 11)]),
         ''.join([board[i] for i in range(9, 91, 9)])
     ]
-    #print(diagonal_rows)  # delete
     rows = horizontal_rows + vertical_rows + diagonal_rows
 
     for row in rows:
-        #print(f'row: {row}')  # delete
         if regex(row, mark):
             return True
     return False
