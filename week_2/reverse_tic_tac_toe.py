@@ -4,52 +4,36 @@ import random
 import re
 
 
-play_board = [str(num) for num in range(1, 101)]
+play_board = ['| - |' if num % 2 else '-' for num in range(1, 101)]
 play_board_idx = {idx for idx, i in enumerate(play_board)}
 players_marks = ['X', 'O']
+n = 10  # quantity of horizontal and vertical labels
+
+
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst"""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
 
 
 def display_board(board_list):
     """Prints the game board"""
-    print(board_list[99] + ' | ' + board_list[98] + ' | ' + board_list[97] + ' | ' + board_list[96] + ' | '
-          + board_list[95] + ' | ' + board_list[94] + ' | ' + board_list[93] + ' | ' + board_list[92] + ' | ' +
-          board_list[91] + ' | ' + board_list[90] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[89] + ' | ' + board_list[88] + ' | ' + board_list[87] + ' | ' + board_list[86] + ' | '
-          + board_list[85] + ' | ' + board_list[84] + ' | ' + board_list[83] + ' | ' + board_list[82] + ' | ' +
-          board_list[81] + ' | ' + board_list[80] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[79] + ' | ' + board_list[78] + ' | ' + board_list[77] + ' | ' + board_list[76] + ' | '
-          + board_list[75] + ' | ' + board_list[74] + ' | ' + board_list[73] + ' | ' + board_list[72] + ' | ' +
-          board_list[71] + ' | ' + board_list[70] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[69] + ' | ' + board_list[68] + ' | ' + board_list[67] + ' | ' + board_list[66] + ' | '
-          + board_list[65] + ' | ' + board_list[64] + ' | ' + board_list[63] + ' | ' + board_list[62] + ' | ' +
-          board_list[61] + ' | ' + board_list[60] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[59] + ' | ' + board_list[58] + ' | ' + board_list[57] + ' | ' + board_list[56] + ' | '
-          + board_list[55] + ' | ' + board_list[54] + ' | ' + board_list[53] + ' | ' + board_list[52] + ' | ' +
-          board_list[51] + ' | ' + board_list[50] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[49] + ' | ' + board_list[48] + ' | ' + board_list[47] + ' | ' + board_list[46] + ' | '
-          + board_list[45] + ' | ' + board_list[44] + ' | ' + board_list[43] + ' | ' + board_list[42] + ' | ' +
-          board_list[41] + ' | ' + board_list[40] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[39] + ' | ' + board_list[38] + ' | ' + board_list[37] + ' | ' + board_list[36] + ' | '
-          + board_list[35] + ' | ' + board_list[34] + ' | ' + board_list[33] + ' | ' + board_list[32] + ' | ' +
-          board_list[31] + ' | ' + board_list[30] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[29] + ' | ' + board_list[28] + ' | ' + board_list[27] + ' | ' + board_list[26] + ' | '
-          + board_list[25] + ' | ' + board_list[24] + ' | ' + board_list[23] + ' | ' + board_list[22] + ' | ' +
-          board_list[21] + ' | ' + board_list[20] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[19] + ' | ' + board_list[18] + ' | ' + board_list[17] + ' | ' + board_list[16] + ' | '
-          + board_list[15] + ' | ' + board_list[14] + ' | ' + board_list[13] + ' | ' + board_list[12] + ' | ' +
-          board_list[11] + ' | ' + board_list[10] + ' ')
-    print(' -- | -- | -- | -- | -- | -- | -- | -- | -- | -- ')
-    print(' ' + board_list[9] + ' |  ' + board_list[8] + ' |  ' + board_list[7] + ' |  ' + board_list[6] + ' |  '
-          + board_list[5] + ' |  ' + board_list[4] + ' |  ' + board_list[3] + ' |  ' + board_list[2] + ' |  ' +
-          board_list[1] + ' |  ' + board_list[0] + ' ')
+    board_list_reversed = [i for i in reversed(board_list)]
+    vert_label_count = n
+    horiz_label_count = n
+    horiz_labels = ''
+    for i in range(n):
+        horiz_labels += f'\t{horiz_label_count}'
+        horiz_label_count -= 1
+    print(horiz_labels)
+
+    for i in list(chunks(board_list_reversed, n)):
+        if vert_label_count == n:
+            print(vert_label_count, end="  ")
+        else:
+            print(vert_label_count, end="   ")
+        print(*i)
+        vert_label_count -= 1
 
 
 def player_input():
@@ -57,7 +41,6 @@ def player_input():
     player = ''
     while player not in ('X', 'O'):
         player = input('Player, please choose your marker: X or O: ').upper()
-
     if player == 'X':
         computer = 'O'
     else:
@@ -67,87 +50,59 @@ def player_input():
 
 def place_marker(board, marker, position):
     """Puts a player and computer marks to appropriate position"""
-    if len(board[position]) == 3:
-        board[position] = f'  {marker}'
-        play_board_idx.remove(position)
-    elif len(board[position]) == 2:
-        board[position] = f' {marker}'
+    if (position + 1) % 2:
+        board[position] = f'| {marker} |'
         play_board_idx.remove(position)
     else:
         board[position] = marker
         play_board_idx.remove(position)
 
 
-def check_place_marker(board, marker, position) :
+def check_place_marker(board, marker, position):
     """Test function arranges computer position for best choice position"""
-    if len(board[position]) == 3:
-        board[position] = f'  {marker}'
-    elif len(board[position]) == 2:
-        board[position] = f' {marker}'
+    if (position + 1) % 2:
+        board[position] = f'| {marker} |'
     else:
         board[position] = marker
 
 
 def regex(string, mark):
-    """This regular expression checks for the presence of a mark X or O in 5 in a row rule"""
-    string = string.replace(" ", "")
+    """Checks for the presence of a mark X or O in 5 in a row rule and return boolean value"""
+    replaced = re.sub(r'[ |]', '', string)
+    #print(f'replaced: {ascii(replaced)}')  # delete
     pattern = re.compile(r'([XO])\1{4}')
-    match = re.findall(pattern, string)
+    match = re.findall(pattern, replaced)
+    #print(f'match: {match}')  # delete
     if mark in match:
         return True
     return False
 
 
+def iterator(board, start, stop, step, offset):
+    """Iteration by board uses start, stop, step and offset for getting all horizontal or all vertical rows"""
+    rows = []
+    for cell in range(n):
+        rows.append(''.join([board[i] for i in range(start, stop, step)]))
+        start -= offset
+        stop -= offset
+    return rows
+
+
 def lose_check(board, mark):
     """Returns boolean value whether the player or the computer loses the game"""
-    rows = [
-        f'{board[99]}{board[98]}{board[97]}{board[96]}{board[95]}{board[94]}{board[93]}{board[92]}{board[91]}'
-        f'{board[90]}',   # 1 horizontal
-        f'{board[89]}{board[88]}{board[87]}{board[86]}{board[85]}{board[84]}{board[83]}{board[82]}{board[81]}'
-        f'{board[80]}'    # 2 horizontal
-        f'{board[79]}{board[78]}{board[77]}{board[76]}{board[75]}{board[74]}{board[73]}{board[72]}{board[71]}'
-        f'{board[70]}',   # 3 horizontal
-        f'{board[69]}{board[68]}{board[67]}{board[66]}{board[65]}{board[64]}{board[63]}{board[62]}{board[61]}'
-        f'{board[60]}',   # 4 horizontal
-        f'{board[59]}{board[58]}{board[57]}{board[56]}{board[55]}{board[54]}{board[53]}{board[52]}{board[51]}'
-        f'{board[50]}',   # 5 horizontal
-        f'{board[49]}{board[48]}{board[47]}{board[46]}{board[45]}{board[44]}{board[43]}{board[42]}{board[41]}'
-        f'{board[40]}',   # 6 horizontal
-        f'{board[39]}{board[38]}{board[37]}{board[36]}{board[35]}{board[34]}{board[33]}{board[32]}{board[31]}'
-        f'{board[30]}',   # 7 horizontal
-        f'{board[29]}{board[28]}{board[27]}{board[26]}{board[25]}{board[24]}{board[23]}{board[22]}{board[21]}'
-        f'{board[20]}',   # 8 horizontal
-        f'{board[19]}{board[18]}{board[17]}{board[16]}{board[15]}{board[14]}{board[13]}{board[12]}{board[11]}'
-        f'{board[10]}',   # 9 horizontal
-        f'{board[9]}{board[8]}{board[7]}{board[6]}{board[5]}{board[4]}{board[3]}{board[2]}{board[1]}'
-        f'{board[0]}',    # 10 horizontal
-        f'{board[99]}{board[89]}{board[79]}{board[69]}{board[59]}{board[49]}{board[39]}{board[29]}{board[19]}'
-        f'{board[9]}',    # 1 vertical
-        f'{board[98]}{board[88]}{board[78]}{board[68]}{board[58]}{board[48]}{board[38]}{board[28]}{board[18]}'
-        f'{board[8]}',    # 2 vertical
-        f'{board[97]}{board[87]}{board[77]}{board[67]}{board[57]}{board[47]}{board[37]}{board[27]}{board[17]}'
-        f'{board[7]}',    # 3 vertical
-        f'{board[96]}{board[86]}{board[76]}{board[66]}{board[56]}{board[46]}{board[36]}{board[26]}{board[16]}'
-        f'{board[6]}',    # 4 vertical
-        f'{board[95]}{board[85]}{board[75]}{board[65]}{board[55]}{board[45]}{board[35]}{board[25]}{board[15]}'
-        f'{board[5]}',    # 5 vertical
-        f'{board[94]}{board[84]}{board[74]}{board[64]}{board[54]}{board[44]}{board[34]}{board[24]}{board[14]}'
-        f'{board[4]}',    # 6 vertical
-        f'{board[93]}{board[83]}{board[73]}{board[63]}{board[53]}{board[43]}{board[33]}{board[23]}{board[13]}'
-        f'{board[3]}',    # 7 vertical
-        f'{board[92]}{board[82]}{board[72]}{board[62]}{board[52]}{board[42]}{board[32]}{board[22]}{board[12]}'
-        f'{board[2]}',    # 8 vertical
-        f'{board[91]}{board[81]}{board[71]}{board[61]}{board[51]}{board[41]}{board[31]}{board[21]}{board[11]}'
-        f'{board[1]}',    # 9 vertical
-        f'{board[90]}{board[80]}{board[70]}{board[60]}{board[50]}{board[40]}{board[30]}{board[20]}{board[10]}'
-        f'{board[0]}',    # 10 vertical
-        f'{board[99]}{board[88]}{board[77]}{board[66]}{board[55]}{board[44]}{board[33]}{board[22]}{board[11]}'
-        f'{board[0]}',    # 1 diagonal
-        f'{board[9]}{board[18]}{board[27]}{board[36]}{board[45]}{board[54]}{board[63]}{board[72]}{board[81]}'
-        f'{board[90]}'    # 2 diagonal
+    horizontal_rows = iterator(board, start=90, stop=100, step=1, offset=10)
+    # print(horizontal_rows)  # delete
+    vertical_rows = iterator(board, start=9, stop=100, step=10, offset=1)
+    #print(vertical_rows)  # delete
+    diagonal_rows = [
+        ''.join([board[i] for i in range(0, 100, 11)]),
+        ''.join([board[i] for i in range(9, 91, 9)])
     ]
+    #print(diagonal_rows)  # delete
+    rows = horizontal_rows + vertical_rows + diagonal_rows
 
     for row in rows:
+        #print(f'row: {row}')  # delete
         if regex(row, mark):
             return True
     return False
@@ -155,8 +110,9 @@ def lose_check(board, mark):
 
 def space_check(board, position):
     """Returns boolean value whether the cell is free or not"""
-    mark = board[position].replace(" ", "")
-    if mark not in players_marks:
+    string = board[position]
+    match = re.findall(r'[XO]', string)
+    if len(match) == 0:
         return True
 
 
@@ -174,6 +130,8 @@ def player_choice(board, player_mark):
                 int(input(f'Player "{player_mark}", choose your next position from 1 to 100: '))
         except ValueError as exc:
             print(f'Wrong value: {exc}. Please, try again.')
+        if isinstance(position, int) and position != 0 and position not in range(1, 101):
+            print(f'Player "{player_mark}", please type a number from range 1 to 100 inclusive!')
 
     position -= 1
     if space_check(board, position):
@@ -266,7 +224,7 @@ while True:
             break
         else:
             clear_screen()
-            play_board = [str(num) for num in range(1, 101)]
+            play_board = ['| - |' if num % 2 else '-' for num in range(1, 101)]
             play_board_idx = {idx for idx, i in enumerate(play_board)}
             print('Welcome to Reverse Tic Tac Toe!')
             print('You\'ll play against the computer!')
