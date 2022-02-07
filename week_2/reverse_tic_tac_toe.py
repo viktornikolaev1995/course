@@ -19,8 +19,8 @@ def chunks(lst, n):
 def display_board(board_list):
     """Prints the game board"""
     board_list_reversed = [i for i in reversed(board_list)]
-    vert_label_count = n
-    horiz_label_count = n
+    vert_label_count = n - 1
+    horiz_label_count = n - 1
     horiz_labels = ''
     for i in range(n):
         horiz_labels += f'\t{horiz_label_count}'
@@ -117,23 +117,26 @@ def full_board_check(board):
 
 def player_choice(board, player_mark):
     """Gets player next position and check if it's appropriate to play"""
-    position = 0
-    while position not in [num for num in range(1, 101)]:
+    position = None
+    while position not in [num for num in range(0, 100)]:
         try:
-            position = \
-                int(input(f'Player "{player_mark}", choose your next position from 1 to 100: '))
+            choice = input(f'Player "{player_mark}", choose your next position from 0 to 99 inclusive: ')
+            if choice in ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09']:
+                position = int(choice[1])
+            else:
+                position = int(choice)
+
         except ValueError as exc:
             print(f'Wrong value: {exc}. Please, try again.')
-        if isinstance(position, int) and position != 0 and position not in range(1, 101):
-            print(f'Player "{player_mark}", please type a number from range 1 to 100 inclusive!')
+        if isinstance(position, int) and position not in range(0, 100):
+            print(f'Player "{player_mark}", please type a number from range 0 to 99 inclusive!')
 
-    position -= 1
     if space_check(board, position):
         return position
     else:
-        """If the player chooses a non-free cell, then it is transferred to the player_choice function
-            to fill exactly the free cell"""
-        print(f'Player "{player_mark}", please choose a free cell! The cell with the number {position + 1} '
+        """If the player chooses a non-free cell, then it is transferred to the player_choice function to fill exactly 
+        the free cell"""
+        print(f'Player "{player_mark}", please choose a free cell! The cell with the number {position} '
               f'is borrowed!')
         return player_choice(board, player_mark)
 
@@ -143,7 +146,6 @@ def replay():
     decision = ''
     while decision not in ('y', 'n'):
         decision = input('Would you like to play again? (Type "y" or "n") ').lower()
-
     return decision == 'y'
 
 
@@ -209,7 +211,7 @@ while True:
             computer_position = random.choice(list(play_board_idx_copy))
 
         print(f'The computer with the mark "{current_mark} chose in his turn cell with the number": '
-              f'{computer_position + 1}')
+              f'{computer_position}')
         place_marker(play_board, current_mark, computer_position)
 
     if check_game_finish(play_board, current_mark, player):
