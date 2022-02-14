@@ -608,12 +608,9 @@ class Pyramid(Rectangle, Shape):
         verts = [[v[0], v[1], v[4]], [v[0], v[3], v[4]], [v[2], v[1], v[4]], [v[3], v[2], v[4]], [v[3], v[0], v[4]],
                  [v[0], v[1], v[2], v[3]]]
         # plot sides
-        for idx, i in enumerate(verts):
-            print(f'verts[idx]: {i}')
         if self.fill:
             ax.add_collection3d(Poly3DCollection(verts, color=self.fc, ec=self.ec, linewidths=1, alpha=self.alpha))
         else:
-            print(True)
             ax.add_collection3d(Line3DCollection(verts, ec=self.ec, linewidths=1, alpha=self.alpha))
 
         ax.scatter3D(points[:, 0], points[:, 1], points[:, 2], facecolors='white', edgecolors='white', alpha=0)
