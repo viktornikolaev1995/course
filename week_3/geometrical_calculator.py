@@ -10,7 +10,7 @@ root = Tk()
 # setting the title
 root.title('Geometric calculator for calculations performed on flat and three-dimensional figures')
 root.iconphoto(True, PhotoImage(file="./geometry.png"))  # setting the icon
-root.geometry("900x700")  # dimensions of the main window
+root.geometry("700x700")  # dimensions of the main window
 fg_header = 'brown'  # color for header of current figure
 fg_main = 'purple'  # color for functions of current figure
 fg_additional = 'black'  # color for attributes and variables
@@ -26,12 +26,11 @@ def create_or_delete_and_create_frame():
 
     if not is_frame_exist:
         frame = LabelFrame(root, fg=fg_main, padx=5, pady=5)  # creates new frame
-        frame.grid(padx=250, pady=30)
-        print(frame)
+        frame.grid(padx=160, pady=30)
     else:
         frame.grid_remove()  # deletes existing frame
         frame = LabelFrame(root, fg=fg_main, padx=5, pady=5)  # creates new frame
-        frame.grid(padx=250, pady=30)
+        frame.grid(padx=160, pady=30)
 
 
 def destroing_labels():
@@ -95,14 +94,17 @@ options = ['Circle', 'Square', 'Rectangle', 'Rhombus', 'Trapezoid', 'Triangle', 
 clicked = StringVar()
 clicked.set(options[0])
 
-drop = OptionMenu(root, clicked, *options)
-drop.grid()
+# drop = OptionMenu(root, clicked, *options)
+# drop.grid(pady=15)
 
-btn_choice_figure = Button(root, text='Select', command=selected_figure)
-btn_choice_figure.grid(padx=450)
+btn_choice_figure = Button(root, text='Select figure from the list below and click on me', command=selected_figure)
+btn_choice_figure.grid(padx=215, pady=5)
+
+drop = OptionMenu(root, clicked, *options)
+drop.grid(pady=5)
 
 frame = LabelFrame(root, fg=fg_main, padx=5, pady=5)
-frame.grid(padx=250, pady=30)
+# frame.grid(padx=330, pady=30)
 
 
 def drawing_interface_for_figure(*args, **kwargs):
