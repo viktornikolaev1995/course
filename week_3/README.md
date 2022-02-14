@@ -1,7 +1,3 @@
-# Geometrical Calculator
-
-Geometrical calculator made with Python
-
 ## Installation
 
 Python version 3.9.4
