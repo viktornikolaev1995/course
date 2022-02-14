@@ -6,16 +6,12 @@ Geometrical calculator made with Python
 
 Python version 3.9.4
 
+Clone this repository: `git clone https://github.com/viktornikolaev1995/course.git`
+
 Go to the project folder `cd week_3`
 
 Install all the necessary packages specified in the file requirements.txt: `pip install -r requirements.txt`
 
-Clone this repository:
-
-```bash
-git clone https://github.com/viktornikolaev1995/course.git
-```
- 
 Run the geometrical calculator script:
 
 ```
