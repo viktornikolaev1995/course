@@ -1,451 +1,445 @@
-from tkinter import *
-from tkinter import messagebox
-
+import tkinter as tk
+from tkinter import ttk, DISABLED, NORMAL, messagebox
 from matplotlib.colors import is_color_like
 from geometrical_figures import (Circle, Square, Rectangle, Rhombus, Trapezoid, Triangle, Sphere, Cube, Parallelepiped,
                                  Pyramid, Cylinder, Cone)
 
 
-root = Tk()
-# setting the title
-root.title('Geometric calculator for calculations performed on flat and three-dimensional figures')
-root.iconphoto(True, PhotoImage(file="./geometry.png"))  # setting the icon
-root.geometry("700x700")  # dimensions of the main window
-fg_header = 'brown'  # color for header of current figure
-fg_main = 'purple'  # color for functions of current figure
-fg_additional = 'black'  # color for attributes and variables
-is_frame_exist = True  # variable which check's if current frame exists
-figure = None  # name of current figure
+class ShapeFrame(ttk.Frame):
+    def __init__(self, container, figure, fg_header, fg_main, fg_additional):
+        super().__init__(container)
+        self.figure = figure
+        self.fg_header = fg_header
+        self.fg_main = fg_main
+        self.fg_additional = fg_additional
+        self.fill = None
+        self.fc = None
+        self.ec = None
+        self.alpha = None
+        self.instance_of_figure = None
+        self.param1 = None
+        self.param2 = None
+        self.param3 = None
+        self.vertex_1 = None
+        self.vertex_2 = None
+        self.vertex_3 = None
+        self.vertex_4 = None
+        self.is_clicked = False  # makes buttons disabled
+        self.const_1 = None
+        self.const_2 = None
+        self.const_3 = None
+        self.text_for_label_param1 = None
+        self.text_for_label_param2 = None
+        self.text_for_label_param3 = None
+        self.label_area = None
+        self.label_perimeter = None
+        self.label_middle_line = None
+        self.label_volume = None
 
+        if self.figure in ['Circle', 'Sphere']:
+            self.const_1 = '200'
+            self.text_for_label_param1 = f'Type the radius value of the {self.figure.lower()}:'
 
-def create_or_delete_and_create_frame():
-    """If frame does not exist, frame must be created. If frame exists, firstly it must be deleted, and after created
-    frame for adding new labels, entries, buttons for another figure, because older labels, entries, buttons the
-    previous figure can be leave and it is not acceptable"""
-    global frame
+        elif self.figure in ['Cylinder', 'Cone']:
+            self.const_1 = '200'
+            self.const_3 = '300'
+            self.text_for_label_param1 = f'Type the radius value of the {self.figure.lower()}:'
+            self.text_for_label_param3 = f'Type the height value of the {self.figure.lower()}:'
 
-    if not is_frame_exist:
-        frame = LabelFrame(root, fg=fg_main, padx=5, pady=5)  # creates new frame
-        frame.grid(padx=160, pady=30)
-    else:
-        frame.grid_remove()  # deletes existing frame
-        frame = LabelFrame(root, fg=fg_main, padx=5, pady=5)  # creates new frame
-        frame.grid(padx=160, pady=30)
+        elif self.figure in ['Square', 'Cube']:
+            self.const_1 = '200'
+            self.text_for_label_param1 = f'Type the length value of the {self.figure.lower()}:'
 
+        elif self.figure == 'Rectangle':
+            self.const_1 = '200'
+            self.const_2 = '100'
+            self.text_for_label_param1 = f'Type the length value of the {self.figure.lower()}:'
+            self.text_for_label_param2 = f'Type the width value of the {self.figure.lower()}:'
 
-def destroing_labels():
-    """Destroying not necessary labels from frame"""
-    try:
-        if label_area.winfo_exists():  # check's existing label
-            label_area.destroy()
-        if label_perimeter.winfo_exists():
-            label_perimeter.destroy()
-        if label_middle_line.winfo_exists():
-            label_middle_line.destroy()
-        if label_volume.winfo_exists():
-            label_volume.destroy()
+        elif self.figure in ['Parallelepiped', 'Pyramid']:
+            self.const_1 = '200'
+            self.const_2 = '100'
+            self.const_3 = '300'
+            self.text_for_label_param1 = f'Type the length value of the {self.figure.lower()}:'
+            self.text_for_label_param2 = f'Type the width value of the {self.figure.lower()}:'
+            self.text_for_label_param3 = f'Type the height value of the {self.figure.lower()}:'
 
-    except NameError:
-        pass
+        elif self.figure == 'Rhombus':
+            self.const_1 = '0, 0; 2, -3; 4, 0; 2, 3'
+            self.text_for_label_param1 = f'Type the vertices of the {self.figure.lower()}:'
 
+        elif self.figure == 'Trapezoid':
+            self.const_1 = '1, 2; 5, 2; 3, 5; 4, 5'
+            self.text_for_label_param1 = f'Type the vertices of the {self.figure.lower()}:'
 
-def selected_figure():
-    """Getting figure from dropdown menu and created frame at current figure if it's necessary"""
-    global figure
-    global is_frame_exist
-    figure = clicked.get()
+        elif self.figure == 'Triangle':
+            self.const_1 = '1, 2; 5, 2; 3, 5'
+            self.text_for_label_param1 = f'Type the vertices of the {self.figure.lower()}:'
 
-    create_or_delete_and_create_frame()
-    if figure in ['Circle', 'Sphere']:
-        drawing_interface_for_figure('200', label_param1=f'Type the radius value of {figure.lower()}:')
+        self.label_figure = tk.Label(self, text=f'{self.figure}', fg=self.fg_header, width=50)
+        self.label_figure.grid(row=1, column=0, pady=10)
+        self.label_param1 = tk.Label(self, text=self.text_for_label_param1, fg=self.fg_additional, width=50)
+        self.label_param1.grid(row=2, column=0)
+        self.entry_param1 = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+        self.entry_param1.grid(row=3, column=0)
+        self.entry_param1.insert(0, self.const_1)
 
-    elif figure in ['Cylinder', 'Cone']:
-        drawing_interface_for_figure('200', '100', label_param1='Type the radius value:',
-                                     label_param3=f'Type the height value of {figure.lower()}:')
-    elif figure in ['Square', 'Cube']:
-        drawing_interface_for_figure('200', label_param1=f'Type the length value of the {figure.lower()}:')
+        if self.figure in ['Rectangle', 'Parallelepiped', 'Pyramid']:
+            self.label_param2 = tk.Label(self, text=self.text_for_label_param2, fg=self.fg_additional, width=50)
+            self.label_param2.grid(row=4, column=0)
 
-    elif figure == 'Rectangle':
-        drawing_interface_for_figure('200', '100',
-                                     label_param1=f'Type the length value of the {figure.lower()}:',
-                                     label_param2=f'Type the width value of {figure.lower()}:',)
+            self.entry_param2 = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+            self.entry_param2.grid(row=5, column=0)
+            self.entry_param2.insert(0, self.const_2)
 
-    elif figure in ['Parallelepiped', 'Pyramid']:
-        drawing_interface_for_figure('200', '100', '300',
-                                     label_param1=f'Type the length value of the {figure.lower()}:',
-                                     label_param2=f'Type the width value of {figure.lower()}:',
-                                     label_param3=f'Type the height value of {figure.lower()}:')
-    elif figure == 'Rhombus':
-        drawing_interface_for_figure('0, 0; 2, -3; 4, 0; 2, 3', label_param1='Type the vertices of the rhombus:')
+            if self.figure in ['Parallelepiped', 'Pyramid']:
 
-    elif figure == 'Trapezoid':
-        drawing_interface_for_figure('1, 2; 5, 2; 3, 5; 4, 5', label_param1='Type the vertices of the trapezoid:')
+                self.label_param3 = tk.Label(self, text=self.text_for_label_param3, fg=self.fg_additional, width=50)
+                self.label_param3.grid(row=6, column=0)
 
-    elif figure == 'Triangle':
-        drawing_interface_for_figure('1, 2; 5, 2; 3, 5', label_param1='Type the vertices of the triangle:')
+                self.entry_param3 = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+                self.entry_param3.grid(row=7, column=0)
+                self.entry_param3.insert(0, self.const_3)
 
-    is_frame_exist = True
-    destroing_labels()
+        if self.figure in ['Cylinder', 'Cone']:
+            self.const_2 = '100'
+            self.label_param3 = tk.Label(self, text='label_param3', fg=self.fg_additional, width=50)
+            self.label_param3.grid(row=4, column=0)
 
+            self.entry_param3 = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+            self.entry_param3.grid(row=5, column=0)
+            self.entry_param3.insert(0, self.const_2)
 
-options = ['Circle', 'Square', 'Rectangle', 'Rhombus', 'Trapezoid', 'Triangle', 'Sphere', 'Cube', 'Parallelepiped',
-           'Pyramid', 'Cylinder', 'Cone']
+        self.label_plotting_sett = tk.Label(self, text='Override the plotting settings if needed', fg=self.fg_main,
+                                            width=50)
+        self.label_plotting_sett.grid(row=8, column=0, pady=15)
 
-clicked = StringVar()
-clicked.set(options[0])
+        self.label_fill = tk.Label(self, text='Filled in the inner area? (Type: yes/no):', fg=self.fg_additional,
+                                   width=50)
+        self.label_fill.grid(row=9, column=0)
 
-# drop = OptionMenu(root, clicked, *options)
-# drop.grid(pady=15)
+        self.entry_fill = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+        self.entry_fill.grid(row=10, column=0)
+        self.entry_fill.insert(0, 'yes')
 
-btn_choice_figure = Button(root, text='Select figure from the list below and click on me', command=selected_figure)
-btn_choice_figure.grid(padx=215, pady=5)
+        self.label_font_color = tk.Label(self, text='Set font color:', fg=self.fg_additional, width=50)
+        self.label_font_color.grid(row=11, column=0)
 
-drop = OptionMenu(root, clicked, *options)
-drop.grid(pady=5)
+        self.entry_font_color = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+        self.entry_font_color.grid(row=12, column=0)
+        self.entry_font_color.insert(0, 'pink')
 
-frame = LabelFrame(root, fg=fg_main, padx=5, pady=5)
-# frame.grid(padx=330, pady=30)
+        self.label_edge_color = tk.Label(self, text='Set edge color:', fg=self.fg_additional, width=50)
+        self.label_edge_color.grid(row=13, column=0)
 
+        self.entry_edge_color = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+        self.entry_edge_color.grid(row=14, column=0)
+        self.entry_edge_color.insert(0, 'green')
 
-def drawing_interface_for_figure(*args, **kwargs):
-    """Drawing frame for current figure with specific labels, entries, buttons and etc"""
-    global entry_param1
-    global entry_param2
-    global entry_param3
-    global entry_fill
-    global entry_font_color
-    global entry_edge_color
-    global entry_alpha
-    global btn_plotting_graphic
-    global btn_calc_area
-    global btn_calc_middle_line
-    global btn_calc_perimeter
-    global btn_calc_volume
-    global const_1
+        self.label_alpha = tk.Label(self, text='Set transparency in range from 0 to 1 inclusive:',
+                                    fg=self.fg_additional, width=50)
+        self.label_alpha.grid(row=15, column=0)
 
-    const_1 = args[0]
-    label_figure = Label(frame, text=f'{figure}', fg=fg_header, width=50)
-    label_figure.grid(row=1, column=0, pady=10)
-    label_param1 = Label(frame, text=kwargs['label_param1'], fg=fg_additional, width=50)
-    label_param1.grid(row=2, column=0)
-    entry_param1 = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-    entry_param1.grid(row=3, column=0)
-    entry_param1.insert(0, const_1)
+        self.entry_alpha = tk.Entry(self, width=50, fg=self.fg_additional, borderwidth='2')
+        self.entry_alpha.grid(row=16, column=0)
+        self.entry_alpha.insert(0, '0.7')
 
-    if figure in ['Rectangle', 'Parallelepiped', 'Pyramid']:
-        const_2 = args[1]
-        label_param2 = Label(frame, text=kwargs['label_param2'], fg=fg_additional, width=50)
-        label_param2.grid(row=4, column=0)
+        self.btn_figure = tk.Button(self, text='Set the plotting settings', fg=self.fg_main, command=self.set_settings)
+        self.btn_figure.grid(row=17, column=0, pady=5)
 
-        entry_param2 = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-        entry_param2.grid(row=5, column=0)
-        entry_param2.insert(0, const_2)
+        self.btn_calc_area = tk.Button(self, text='Calculating area', fg=self.fg_main, command=self.calc_area)
+        self.btn_calc_area.grid(row=18, column=0, pady=5)
 
-        if figure in ['Parallelepiped', 'Pyramid']:
-            const_3 = args[2]
-            label_param3 = Label(frame, text=kwargs['label_param3'], fg=fg_additional, width=50)
-            label_param3.grid(row=6, column=0)
+        if self.figure in ['Trapezoid']:
+            self.btn_calc_middle_line = tk.Button(self, text='Calculating middle line', fg=self.fg_main,
+                                                  command=self.calc_middle_line)
+            self.btn_calc_middle_line.grid(row=19, column=0, pady=5)
 
-            entry_param3 = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-            entry_param3.grid(row=7, column=0)
-            entry_param3.insert(0, const_3)
+        elif self.figure not in ['Sphere', 'Cube', 'Parallelepiped', 'Pyramid', 'Cylinder', 'Cone']:
+            self.btn_calc_perimeter = tk.Button(self, text='Calculating perimeter', fg=self.fg_main,
+                                                command=self.calc_perimeter)
+            self.btn_calc_perimeter.grid(row=19, column=0, pady=5)
 
-    if figure in ['Cylinder', 'Cone']:
-        const_2 = args[1]
-        label_param3 = Label(frame, text=kwargs['label_param3'], fg=fg_additional, width=50)
-        label_param3.grid(row=4, column=0)
+        else:
+            self.btn_calc_volume = tk.Button(self, text='Calculating volume', fg=self.fg_main, command=self.calc_volume)
+            self.btn_calc_volume.grid(row=19, column=0, pady=5)
 
-        entry_param3 = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-        entry_param3.grid(row=5, column=0)
-        entry_param3.insert(0, const_2)
+        self.btn_plotting_graphic = tk.Button(self, text='Plotting graphic', fg=self.fg_main,
+                                              command=self.plotting_graphic)
+        self.btn_plotting_graphic.grid(row=20, column=0, pady=5)
 
-    label_plotting_sett = Label(frame, text='Override the plotting settings if needed', fg=fg_main, width=50)
-    label_plotting_sett.grid(row=8, column=0, pady=15)
+        if self.figure in ['Trapezoid']:
+            self.disabled_buttons = self.disabled_or_enabled_buttons(self.btn_calc_area, self.btn_calc_middle_line,
+                                                                     self.btn_plotting_graphic, state=DISABLED)
+            self.btn_calc_middle_line = self.disabled_buttons[1]
 
-    label_fill = Label(frame, text='Filled in the inner area? (Type: yes/no):', fg=fg_additional, width=50)
-    label_fill.grid(row=9, column=0)
+        elif self.figure in ['Sphere', 'Cube', 'Parallelepiped', 'Pyramid', 'Cylinder', 'Cone']:
+            self.disabled_buttons = self.disabled_or_enabled_buttons(self.btn_calc_area, self.btn_calc_volume,
+                                                                     self.btn_plotting_graphic, state=DISABLED)
+            self.btn_calc_volume = self.disabled_buttons[1]
 
-    entry_fill = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-    entry_fill.grid(row=10, column=0)
-    entry_fill.insert(0, 'no')
+        else:
+            self.disabled_buttons = self.disabled_or_enabled_buttons(self.btn_calc_area, self.btn_calc_perimeter,
+                                                                     self.btn_plotting_graphic, state=DISABLED)
+            self.btn_calc_perimeter = self.disabled_buttons[1]
 
-    label_font_color = Label(frame, text='Set font color:', fg=fg_additional, width=50)
-    label_font_color.grid(row=11, column=0)
+        self.btn_calc_area = self.disabled_buttons[0]
+        self.btn_plotting_graphic = self.disabled_buttons[2]
+        self.grid()
 
-    entry_font_color = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-    entry_font_color.grid(row=12, column=0)
-    entry_font_color.insert(0, 'blue')
+    @staticmethod
+    def disabled_or_enabled_buttons(*args, **kwargs):
+        """Makes the button disabled or enabled"""
+        for btn in args:
+            btn['state'] = kwargs['state']
+        return args
 
-    label_edge_color = Label(frame, text='Set edge color:', fg=fg_additional, width=50)
-    label_edge_color.grid(row=13, column=0)
+    def overriding_state_of_buttons_if_calling_errors(self, state):
+        """Overriding state of buttons if calling errors at validation"""
+        if self.figure in ['Trapezoid']:
+            self.disabled_or_enabled_buttons(self.btn_calc_area, self.btn_calc_middle_line, self.btn_plotting_graphic,
+                                             state=state)
+        elif self.figure not in ['Sphere', 'Cube', 'Parallelepiped', 'Pyramid', 'Cylinder', 'Cone']:
+            self.disabled_or_enabled_buttons(self.btn_calc_area, self.btn_calc_perimeter, self.btn_plotting_graphic,
+                                             state=state)
+        else:
+            self.disabled_or_enabled_buttons(self.btn_calc_area, self.btn_calc_volume, self.btn_plotting_graphic,
+                                             state=state)
 
-    entry_edge_color = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-    entry_edge_color.grid(row=14, column=0)
-    entry_edge_color.insert(0, 'green')
+    def validate_variables(self, **kwargs):
+        """Validating gotten variables"""
+        if self.figure not in ['Rhombus', 'Trapezoid', 'Triangle']:
+            try:
+                self.param1 = float(kwargs['entry_param'].get())
+                if self.param1 <= 0:
+                    self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
+                    messagebox.showerror(
+                        'ValueError', f'Your input for {kwargs["type_of_param"]}: `{kwargs["entry_param"].get()}`'
+                                      f' is incorrect! {kwargs["type_of_param"].capitalize()} can not be negative or '
+                                      f'equal 0!')
+                    raise Exception(f'{kwargs["type_of_param"].capitalize()} can not be negative or equal 0!')
+                return self.param1
+            except ValueError as err:
+                self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
 
-    label_alpha = Label(frame, text='Set transparency in range from 0 to 1 inclusive:', fg=fg_additional, width=50)
-    label_alpha.grid(row=15, column=0)
-
-    entry_alpha = Entry(frame, width=50, fg=fg_additional, borderwidth='2')
-    entry_alpha.grid(row=16, column=0)
-    entry_alpha.insert(0, '0.7')
-
-    btn_figure = Button(frame, text='Set the plotting settings', fg=fg_main, command=set_settings)
-    btn_figure.grid(row=17, column=0, pady=5)
-
-    btn_calc_area = Button(frame, text='Calculating area', fg=fg_main, command=calc_area)
-    btn_calc_area.grid(row=18, column=0, pady=5)
-
-    if figure in ['Trapezoid']:
-        btn_calc_middle_line = Button(frame, text='Calculating middle line', fg=fg_main, command=calc_middle_line)
-        btn_calc_middle_line.grid(row=19, column=0, pady=5)
-
-    elif figure not in ['Sphere', 'Cube', 'Parallelepiped', 'Pyramid', 'Cylinder', 'Cone']:
-        btn_calc_perimeter = Button(frame, text='Calculating perimeter', fg=fg_main, command=calc_perimeter)
-        btn_calc_perimeter.grid(row=19, column=0, pady=5)
-
-    else:
-        btn_calc_volume = Button(frame, text='Calculating volume', fg=fg_main, command=calc_volume)
-        btn_calc_volume.grid(row=19, column=0, pady=5)
-
-    btn_plotting_graphic = Button(frame, text='Plotting graphic', fg=fg_main, command=plot)
-    btn_plotting_graphic.grid(row=20, column=0, pady=5)
-
-    if figure in ['Trapezoid']:
-        disabled_buttons = disabled_or_enabled_buttons(btn_calc_area, btn_calc_middle_line, btn_plotting_graphic,
-                                                       state=DISABLED)
-        btn_calc_middle_line = disabled_buttons[1]
-
-    elif figure in ['Sphere', 'Cube', 'Parallelepiped', 'Pyramid', 'Cylinder', 'Cone']:
-        disabled_buttons = disabled_or_enabled_buttons(btn_calc_area, btn_calc_volume, btn_plotting_graphic,
-                                                       state=DISABLED)
-        btn_calc_volume = disabled_buttons[1]
-
-    else:
-        disabled_buttons = disabled_or_enabled_buttons(btn_calc_area, btn_calc_perimeter, btn_plotting_graphic,
-                                                       state=DISABLED)
-        btn_calc_perimeter = disabled_buttons[1]
-
-    btn_calc_area = disabled_buttons[0]
-    btn_plotting_graphic = disabled_buttons[2]
-    is_clicked = False  # makes buttons disabled
-
-
-def disabled_or_enabled_buttons(*args, state):
-    """Makes the button disabled or enabled"""
-    for btn in args:
-        btn['state'] = state
-    return args
-
-
-def overriding_state_of_buttons_if_calling_errors(state):
-    """Overriding state of buttons if calling errors at validation"""
-    if figure in ['Trapezoid']:
-        disabled_or_enabled_buttons(btn_calc_area, btn_calc_middle_line, btn_plotting_graphic, state=state)
-    elif figure not in ['Sphere', 'Cube', 'Parallelepiped', 'Pyramid', 'Cylinder', 'Cone']:
-        disabled_or_enabled_buttons(btn_calc_area, btn_calc_perimeter, btn_plotting_graphic, state=state)
-    else:
-        disabled_or_enabled_buttons(btn_calc_area, btn_calc_volume, btn_plotting_graphic, state=state)
-
-
-def validate_variables(**kwargs):
-    """Validating gotten variables"""
-    if figure not in ['Rhombus', 'Trapezoid', 'Triangle']:
-        try:
-            param1 = float(kwargs['entry_param'].get())
-            if param1 <= 0:
-                overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-                messagebox.showerror(
-                    'ValueError', f'Your input for {kwargs["type_of_param"]}: `{kwargs["entry_param"].get()}`'
-                    f' is incorrect! {kwargs["type_of_param"].capitalize()} can not be negative or equal 0!')
-                raise Exception(f'{kwargs["type_of_param"].capitalize()} can not be negative or equal 0!')
-            return param1
-        except ValueError as err:
-            overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-
-            messagebox.showerror(f'{err}', f'Your input for {kwargs["type_of_param"]}: `{kwargs["entry_param"].get()}`'
-                                           f' is incorrect! {kwargs["type_of_param"].capitalize()} can be a float or '
-                                           f'int type!')
-            raise ValueError(f'Variable {kwargs["type_of_param"]} is not a float or int type!')
-    else:
-        try:
-            if figure != 'Triangle':
-                vertex_1, vertex_2, vertex_3, vertex_4 = kwargs['entry_param'].get().split(';')
-                if figure == 'Trapezoid':
-                    Trapezoid(vertex_1, vertex_2, vertex_3, vertex_4)
-                else:
-                    Rhombus(vertex_1, vertex_2, vertex_3, vertex_4)
-                return vertex_1, vertex_2, vertex_3, vertex_4
-
-            elif figure == 'Triangle':
-                vertex_1, vertex_2, vertex_3 = kwargs['entry_param'].get().split(';')
-                Triangle(vertex_1, vertex_2, vertex_3)
-                return vertex_1, vertex_2, vertex_3
-
-        except ValueError as err:
-            overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-            if 'not enough values to unpack' in err.__str__():
-                messagebox.showerror('ValueError',
+                messagebox.showerror(f'{err}',
                                      f'Your input for {kwargs["type_of_param"]}: `{kwargs["entry_param"].get()}`'
-                                     f' is incorrect! {kwargs["type_of_param"].capitalize()} '
-                                     f'expects to receive coordinates in the format: {const_1}')
+                                     f' is incorrect! {kwargs["type_of_param"].capitalize()} can be a float or '
+                                     f'int type!')
+                raise ValueError(f'Variable {kwargs["type_of_param"]} is not a float or int type!')
+        else:
+            try:
+                if self.figure != 'Triangle':
+                    self.vertex_1, self.vertex_2, self.vertex_3, self.vertex_4 = kwargs['entry_param'].get().split(';')
+                    if self.figure == 'Trapezoid':
+                        Trapezoid(self.vertex_1, self.vertex_2, self.vertex_3, self.vertex_4)
+                    else:
+                        Rhombus(self.vertex_1, self.vertex_2, self.vertex_3, self.vertex_4)
+                    return self.vertex_1, self.vertex_2, self.vertex_3, self.vertex_4
+
+                elif self.figure == 'Triangle':
+                    self.vertex_1, self.vertex_2, self.vertex_3 = kwargs['entry_param'].get().split(';')
+                    Triangle(self.vertex_1, self.vertex_2, self.vertex_3)
+                    return self.vertex_1, self.vertex_2, self.vertex_3
+
+            except ValueError as err:
+                self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
+                if 'not enough values to unpack' in err.__str__():
+                    messagebox.showerror('ValueError',
+                                         f'Your input for {kwargs["type_of_param"]}: `{kwargs["entry_param"].get()}`'
+                                         f' is incorrect! {kwargs["type_of_param"].capitalize()} '
+                                         f'expects to receive coordinates in the format: {self.const_1}')
+                    raise ValueError(f'{err}')
+                messagebox.showerror('ValueError', f'{err}')
                 raise ValueError(f'{err}')
-            messagebox.showerror('ValueError', f'{err}')
-            raise ValueError(f'{err}')
 
+    def set_settings(self):
+        """Setting of settings of current figure for further work with gotten data"""
 
-def set_settings():
-    """Setting of settings of current figure for further work with gotten data"""
-    global is_clicked
-    global param1
-    global param2
-    global param3
-    global fill
-    global fc
-    global ec
-    global alpha
-    global instance_of_figure
-    global vertex_1
-    global vertex_2
-    global vertex_3
-    global vertex_4
+        if self.figure in ['Circle', 'Sphere']:
+            self.param1 = self.validate_variables(entry_param=self.entry_param1, type_of_param='radius')
+        elif self.figure in ['Square', 'Cube', 'Rectangle', 'Parallelepiped', 'Pyramid']:
+            self.param1 = self.validate_variables(entry_param=self.entry_param1, type_of_param='length')
+            if self.figure in ['Rectangle', 'Parallelepiped', 'Pyramid']:
+                self.param2 = self.validate_variables(entry_param=self.entry_param2, type_of_param='width')
+            if self.figure in ['Parallelepiped', 'Pyramid']:
+                self.param3 = self.validate_variables(entry_param=self.entry_param3, type_of_param='height')
 
-    if figure in ['Circle', 'Sphere']:
-        param1 = validate_variables(entry_param=entry_param1, type_of_param='radius')
-    elif figure in ['Square', 'Cube', 'Rectangle', 'Parallelepiped', 'Pyramid']:
-        param1 = validate_variables(entry_param=entry_param1, type_of_param='length')
-        if figure in ['Rectangle', 'Parallelepiped', 'Pyramid']:
-            param2 = validate_variables(entry_param=entry_param2, type_of_param='width')
-        if figure in ['Parallelepiped', 'Pyramid']:
-            param3 = validate_variables(entry_param=entry_param3, type_of_param='height')
+        elif self.figure in ['Rhombus', 'Trapezoid']:
+            self.vertex_1, self.vertex_2, self.vertex_3, self.vertex_4 = self.validate_variables(
+                entry_param=self.entry_param1, type_of_param='vertexes')
 
-    elif figure in ['Rhombus', 'Trapezoid']:
-        vertex_1, vertex_2, vertex_3, vertex_4 = validate_variables(entry_param=entry_param1, type_of_param='vertexes')
-    elif figure == 'Triangle':
-        vertex_1, vertex_2, vertex_3 = validate_variables(entry_param=entry_param1, type_of_param='vertexes')
-    elif figure in ['Cylinder', 'Cone']:
-        param1 = validate_variables(entry_param=entry_param1, type_of_param='radius')
-        param3 = validate_variables(entry_param=entry_param3, type_of_param='height')
+        elif self.figure == 'Triangle':
+            self.vertex_1, self.vertex_2, self.vertex_3 = self.validate_variables(entry_param=self.entry_param1,
+                                                                                  type_of_param='vertexes')
+        elif self.figure in ['Cylinder', 'Cone']:
+            self.param1 = self.validate_variables(entry_param=self.entry_param1, type_of_param='radius')
+            self.param3 = self.validate_variables(entry_param=self.entry_param3, type_of_param='height')
 
-    fill = entry_fill.get().lower()
+        self.fill = self.entry_fill.get().lower()
 
-    if fill in ['yes', 'no']:
-        fill = True if fill == 'yes' else False
-    else:
-        overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-        messagebox.showerror('ValueError', f'Your input for `fill in the area`: {fill} is not yes or no string!')
-        raise ValueError('Attribute fill not in ["yes", "no"]!')
+        if self.fill in ['yes', 'no']:
+            self.fill = True if self.fill == 'yes' else False
+        else:
+            self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
+            messagebox.showerror('ValueError', f'Your input for `fill in the area`: {self.fill} is not yes or no '
+                                               f'string!')
+            raise ValueError('Attribute fill not in ["yes", "no"]!')
 
-    fc = entry_font_color.get()
+        self.fc = self.entry_font_color.get()
 
-    if is_color_like(fc):
-        pass
-    else:
-        overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-        messagebox.showerror('ValueError', f'Your input for font color: {fc} is not in the color list. '
-                                           f'Type a correct color!')
-        raise ValueError('Attribute fg not in matplotlib color list!')
-
-    ec = entry_edge_color.get()
-
-    if is_color_like(ec):
-        pass
-    else:
-        overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-        messagebox.showerror('ValueError', f'Your input for edge color: {ec} is not in the color list. '
-                                           f'Type a correct color!')
-        raise ValueError('Attribute eg not in matplotlib color list!')
-
-    try:
-        alpha = float(entry_alpha.get())
-        if round(alpha, 0) in [0, 1]:
+        if is_color_like(self.fc):
             pass
         else:
-            overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-            messagebox.showerror(f'ValueError', f'Your input for transparency: `{entry_alpha.get()}`'
-                                           f' is incorrect! Transparency can be in the range in 0 to 1 inclusive!')
-            raise Exception(f'Attribute transparency is not in the range in 0 to 1!')
-    except ValueError as err:
-        overriding_state_of_buttons_if_calling_errors(state=DISABLED)
-        messagebox.showerror(f'{err}', f'Your input for transparency: `{entry_alpha.get()}`'
-                                       f' is incorrect! Transparency can be a float or '
-                                       f'int type!')
-        raise ValueError(f'Attribute transparency is not a float or int type!')
+            self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
+            messagebox.showerror('ValueError', f'Your input for font color: {self.fc} is not in the color list. '
+                                               f'Type a correct color!')
+            raise ValueError('Attribute fg not in matplotlib color list!')
 
-    is_clicked = True  # enabling disabled buttons after tap button set plotting settings
+        self.ec = self.entry_edge_color.get()
 
-    if is_clicked:
-        overriding_state_of_buttons_if_calling_errors(state=NORMAL)
+        if is_color_like(self.ec):
+            pass
+        else:
+            self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
+            messagebox.showerror('ValueError', f'Your input for edge color: {self.ec} is not in the color list. '
+                                               f'Type a correct color!')
+            raise ValueError('Attribute eg not in matplotlib color list!')
 
-    if figure == 'Circle':
-        instance_of_figure = Circle(radius=param1)
+        try:
+            self.alpha = float(self.entry_alpha.get())
+            if round(self.alpha, 0) in [0, 1]:
+                pass
+            else:
+                self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
+                messagebox.showerror(f'ValueError', f'Your input for transparency: `{self.entry_alpha.get()}` '
+                                     f'is incorrect! Transparency can be in the range in 0 to 1 '
+                                     f'inclusive!')
+                raise Exception(f'Attribute transparency is not in the range in 0 to 1!')
+        except ValueError as err:
+            self.overriding_state_of_buttons_if_calling_errors(state=DISABLED)
+            messagebox.showerror(f'{err}', f'Your input for transparency: `{self.entry_alpha.get()}` '
+                                 f'is incorrect! Transparency can be a float or '
+                                 f'int type!')
+            raise ValueError(f'Attribute transparency is not a float or int type!')
 
-    elif figure == 'Square':
-        instance_of_figure = Square(length=param1)
+        self.is_clicked = True  # enabling disabled buttons after tap button set plotting settings
 
-    elif figure == 'Rectangle':
-        instance_of_figure = Rectangle(length=param1, width=param2)
+        if self.is_clicked:
+            self.overriding_state_of_buttons_if_calling_errors(state=NORMAL)
 
-    elif figure == 'Rhombus':
-        instance_of_figure = Rhombus(coord_1=vertex_1, coord_2=vertex_2, coord_3=vertex_3, coord_4=vertex_4)
+        if self.figure == 'Circle':
+            self.instance_of_figure = Circle(radius=self.param1)
 
-    elif figure == 'Trapezoid':
-        instance_of_figure = Trapezoid(coord_1=vertex_1, coord_2=vertex_2, coord_3=vertex_3, coord_4=vertex_4)
+        elif self.figure == 'Square':
+            self.instance_of_figure = Square(length=self.param1)
 
-    elif figure == 'Triangle':
-        instance_of_figure = Triangle(coord_1=vertex_1, coord_2=vertex_2, coord_3=vertex_3)
+        elif self.figure == 'Rectangle':
+            self.instance_of_figure = Rectangle(length=self.param1, width=self.param2)
 
-    elif figure == 'Sphere':
-        instance_of_figure = Sphere(radius=param1)
+        elif self.figure == 'Rhombus':
+            self.instance_of_figure = Rhombus(coord_1=self.vertex_1, coord_2=self.vertex_2, coord_3=self.vertex_3,
+                                              coord_4=self.vertex_4)
 
-    elif figure == 'Cube':
-        instance_of_figure = Cube(length=param1)
+        elif self.figure == 'Trapezoid':
+            self.instance_of_figure = Trapezoid(coord_1=self.vertex_1, coord_2=self.vertex_2, coord_3=self.vertex_3,
+                                                coord_4=self.vertex_4)
 
-    elif figure == 'Parallelepiped':
-        instance_of_figure = Parallelepiped(length=param1, width=param2, height=param3)
+        elif self.figure == 'Triangle':
+            self.instance_of_figure = Triangle(coord_1=self.vertex_1, coord_2=self.vertex_2, coord_3=self.vertex_3)
 
-    elif figure == 'Pyramid':
-        instance_of_figure = Pyramid(length=param1, width=param2, height=param3)
+        elif self.figure == 'Sphere':
+            self.instance_of_figure = Sphere(radius=self.param1)
 
-    elif figure == 'Cylinder':
-        instance_of_figure = Cylinder(radius=param1, height=param3)
+        elif self.figure == 'Cube':
+            self.instance_of_figure = Cube(length=self.param1)
 
-    elif figure == 'Cone':
-        instance_of_figure = Cone(radius=param1, height=param3)
+        elif self.figure == 'Parallelepiped':
+            self.instance_of_figure = Parallelepiped(length=self.param1, width=self.param2, height=self.param3)
+
+        elif self.figure == 'Pyramid':
+            self.instance_of_figure = Pyramid(length=self.param1, width=self.param2, height=self.param3)
+
+        elif self.figure == 'Cylinder':
+            self.instance_of_figure = Cylinder(radius=self.param1, height=self.param3)
+
+        elif self.figure == 'Cone':
+            self.instance_of_figure = Cone(radius=self.param1, height=self.param3)
+
+    def calc_area(self):
+        """Calculating area of current figure if the function will be called current figure instance"""
+        self.label_area = tk.Label(self, text=f'{self.instance_of_figure.area()}', fg=self.fg_additional, width=50)
+        self.label_area.grid(row=21, column=0)
+
+    def calc_perimeter(self):
+        """Calculating perimeter of current figure if the function will be called current figure instance"""
+        self.label_perimeter = tk.Label(self, text=f'{self.instance_of_figure.perimeter()}', fg=self.fg_additional,
+                                        width=50)
+        self.label_perimeter.grid(row=22, column=0)
+
+    def calc_middle_line(self):
+        """Calculating middle line of current figure if the function will be called current figure instance"""
+        self.label_middle_line = tk.Label(self, text=f'{self.instance_of_figure.middle_line()}', fg=self.fg_additional,
+                                          width=50)
+        self.label_middle_line.grid(row=22, column=0)
+
+    def calc_volume(self):
+        """Calculating volume of current figure if the function will be called current figure instance"""
+        self.label_volume = tk.Label(self, text=f'{self.instance_of_figure.volume()}', fg=self.fg_additional, width=50)
+        self.label_volume.grid(row=22, column=0)
+
+    def plotting_graphic(self):
+        """Plotting graphic for current figure"""
+        self.instance_of_figure.__class__.override_plotting_settings(fill=self.fill, fc=self.fc, ec=self.ec,
+                                                                     alpha=self.alpha)
+        self.instance_of_figure.plotting_graphic()
 
 
-def calc_area():
-    """Calculating area of current figure if the function will be called current figure instance"""
-    global label_area
-    label_area = Label(frame, text=f'{instance_of_figure.area()}', fg=fg_additional, width=50)
-    label_area.grid(row=21, column=0)
+class MainApp(tk.Tk):
+    """"""
+    def __init__(self):
+        super().__init__()
+        options = {'padx': 187.5, 'pady': 5}
+        self.title('Geometric calculator')
+        self.geometry('700x800')
+        self.iconphoto(True, tk.PhotoImage(file="../../week_3/geometry.png"))
+        self.fg_header = 'brown'  # color for header of current figure
+        self.fg_main = 'purple'  # color for functions of current figure
+        self.fg_additional = 'black'  # color for attributes and variables
+        self.figure = 'Circle'  # name of current figure
+        self.label = tk.Label(self, text='Hello, This is the geometrical calculator for the 2d and 3d shapes.\n '
+                                         'With his help, you can calculate area, perimeter, volume, and median\n '
+                                         'lines for the figures from the list below. Also, you can plot graphics\n '
+                                         'for the selected shape, visualize the shape!', fg=self.fg_header)
+        self.label.grid()
+        self.options_of_choice_figures = ['Circle', 'Square', 'Rectangle', 'Rhombus', 'Trapezoid', 'Triangle',
+                                          'Sphere', 'Cube', 'Parallelepiped', 'Pyramid', 'Cylinder', 'Cone']
+        self.clicked = tk.StringVar()
+        self.clicked.set(self.options_of_choice_figures[0])
+
+        self.drop = tk.OptionMenu(self, self.clicked, *self.options_of_choice_figures)
+        self.drop.grid(**options)
+
+        self.btn_choice_figure = tk.Button(self, text='Select a shape from the overlying list and click on this button')
+        self.btn_choice_figure['command'] = self.selected_figure
+        self.btn_choice_figure.grid(**options)
+
+        self.__create_widgets()
+
+    def selected_figure(self):
+        self.figure = self.clicked.get()  # selects a shape by the click
+        self.__deleted_widgets()  # deletes previous frame
+        self.__create_widgets()   # creates new frame
+
+    def __create_widgets(self):
+        """Creates a frame"""
+        self.frame = ShapeFrame(self, self.figure, self.fg_header, self.fg_main, self.fg_additional)
+
+    def __deleted_widgets(self):
+        """Deletes a frame"""
+        self.frame.grid_remove()
 
 
-def calc_perimeter():
-    """Calculating perimeter of current figure if the function will be called current figure instance"""
-    global label_perimeter
-    label_perimeter = Label(frame, text=f'{instance_of_figure.perimeter()}', fg=fg_additional, width=50)
-    label_perimeter.grid(row=22, column=0)
-
-
-def calc_middle_line():
-    """Calculating middle line of current figure if the function will be called current figure instance"""
-    global label_middle_line
-    label_middle_line = Label(frame, text=f'{instance_of_figure.middle_line()}', fg=fg_additional, width=50)
-    label_middle_line.grid(row=22, column=0)
-
-
-def calc_volume():
-    """Calculating volume of current figure if the function will be called current figure instance"""
-    global label_volume
-    label_volume = Label(frame, text=f'{instance_of_figure.volume()}', fg=fg_additional, width=50)
-    label_volume.grid(row=22, column=0)
-
-
-def plot():
-    """Plotting graphic for current figure"""
-    instance_of_figure.__class__.override_plotting_settings(fill=fill, fc=fc, ec=ec, alpha=alpha)
-    instance_of_figure.plotting_graphic()
-
-
-root.mainloop()
+if __name__ == "__main__":
+    app = MainApp()
+    app.mainloop()
